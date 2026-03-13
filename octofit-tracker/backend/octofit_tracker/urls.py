@@ -33,14 +33,22 @@ router.register(r'teams', TeamViewSet)
 router.register(r'leaderboard', LeaderboardEntryViewSet)
 router.register(r'workouts', WorkoutSuggestionViewSet)
 
+
+import os
+
 @api_view(['GET'])
 def api_root(request, format=None):
+    codespace_name = os.environ.get('CODESPACE_NAME')
+    if codespace_name:
+        base_url = f"https://{codespace_name}-8000.app.github.dev/api"
+    else:
+        base_url = f"http://{request.get_host()}/api"
     return Response({
-        'users': drf_reverse('userprofile-list', request=request, format=format),
-        'activities': drf_reverse('activitylog-list', request=request, format=format),
-        'teams': drf_reverse('team-list', request=request, format=format),
-        'leaderboard': drf_reverse('leaderboardentry-list', request=request, format=format),
-        'workouts': drf_reverse('workoutsuggestion-list', request=request, format=format),
+        'users': f'{base_url}/users/',
+        'activities': f'{base_url}/activities/',
+        'teams': f'{base_url}/teams/',
+        'leaderboard': f'{base_url}/leaderboard/',
+        'workouts': f'{base_url}/workouts/',
     })
 
 urlpatterns = [
